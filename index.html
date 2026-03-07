@@ -167,6 +167,11 @@
         <div class="sub">hours</div>
       </div>
       <div class="stat-card">
+        <div class="label">avg wpm</div>
+        <div class="value" id="avg-wpm">—</div>
+        <div class="sub">across pb modes</div>
+      </div>
+      <div class="stat-card">
         <div class="label">member since</div>
         <div class="value" id="member-since" style="font-size:1.2rem; padding-top:0.6rem;">—</div>
       </div>
@@ -213,8 +218,17 @@
         document.getElementById('time-typing').textContent = timeHours;
         document.getElementById('member-since').textContent = joined;
 
-        // personal bests
+        // avg wpm across all personal bests
         const pb = data.personalBests ?? {};
+        const allWpms = Object.values(pb).flatMap(modeObj =>
+          Object.values(modeObj).flatMap(entries =>
+            entries.length ? [entries.reduce((a, b) => b.wpm > a.wpm ? b : a).wpm] : []
+          )
+        );
+        document.getElementById('avg-wpm').textContent = allWpms.length
+          ? Math.round(allWpms.reduce((a, b) => a + b, 0) / allWpms.length)
+          : '—';
+
         const grid = document.getElementById('bests-grid');
         const modes = [
           { key: 'time', label: '15s', sub: '15' },
