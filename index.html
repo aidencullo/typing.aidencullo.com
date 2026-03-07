@@ -16,257 +16,106 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      gap: 0.5rem;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    header h1 {
-      font-size: 2rem;
-      color: #e2b714;
-      letter-spacing: 0.1em;
-    }
-
-    header p {
+    h1 {
+      font-size: 1rem;
       color: #646669;
-      margin-top: 0.4rem;
-      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 2rem;
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 800px;
-      margin-bottom: 3rem;
+    .stats {
+      display: flex;
+      gap: 4rem;
+      align-items: flex-end;
     }
 
-    .stat-card {
-      background: #2c2c2c;
-      border-radius: 8px;
-      padding: 1.4rem 1.2rem;
+    .stat {
       text-align: center;
     }
 
-    .stat-card .label {
-      font-size: 0.75rem;
-      color: #646669;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-card .value {
-      font-size: 2.2rem;
+    .stat .value {
+      font-size: 6rem;
       font-weight: bold;
       color: #e2b714;
+      line-height: 1;
     }
 
-    .stat-card .sub {
+    .stat .label {
       font-size: 0.75rem;
       color: #646669;
-      margin-top: 0.3rem;
-    }
-
-    .bests {
-      width: 100%;
-      max-width: 800px;
-    }
-
-    .bests h2 {
-      color: #646669;
-      font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      margin-bottom: 1rem;
+      margin-top: 0.6rem;
     }
 
-    .bests-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem;
-    }
-
-    .best-card {
-      background: #2c2c2c;
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .best-card .mode {
-      font-size: 0.7rem;
+    #status {
       color: #646669;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.4rem;
-    }
-
-    .best-card .wpm {
-      font-size: 1.8rem;
-      color: #e2b714;
-      font-weight: bold;
-    }
-
-    .best-card .acc {
-      font-size: 0.75rem;
-      color: #646669;
-      margin-top: 0.3rem;
-    }
-
-    #error {
-      display: none;
-      text-align: center;
-      color: #646669;
-    }
-
-    #error a {
-      color: #e2b714;
-      text-decoration: none;
-    }
-
-    #loading {
-      color: #646669;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      margin-top: 2rem;
     }
 
     footer {
-      margin-top: 3rem;
+      position: fixed;
+      bottom: 1.5rem;
       color: #3c3c3c;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
     }
 
-    footer a {
-      color: #646669;
-      text-decoration: none;
-    }
+    footer a { color: #646669; text-decoration: none; }
   </style>
 </head>
 <body>
+  <h1>acullo</h1>
 
-  <header>
-    <h1>acullo</h1>
-    <p>typing stats</p>
-  </header>
-
-  <div id="loading">loading...</div>
-
-  <div id="main" style="display:none; width:100%; max-width:800px;">
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="label">tests completed</div>
-        <div class="value" id="tests-completed">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">time typing</div>
-        <div class="value" id="time-typing">—</div>
-        <div class="sub">hours</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">avg wpm</div>
-        <div class="value" id="avg-wpm">—</div>
-        <div class="sub">across pb modes</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">member since</div>
-        <div class="value" id="member-since" style="font-size:1.2rem; padding-top:0.6rem;">—</div>
-      </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="value" id="wpm">—</div>
+      <div class="label">wpm</div>
     </div>
-
-    <div class="bests">
-      <h2>personal bests (wpm)</h2>
-      <div class="bests-grid" id="bests-grid"></div>
+    <div class="stat">
+      <div class="value" id="acc">—</div>
+      <div class="label">accuracy</div>
     </div>
   </div>
 
-  <div id="error">
-    <p>couldn't load stats automatically.</p>
-    <p style="margin-top:0.5rem;">
-      view profile on <a href="https://monkeytype.com/profile/acullo" target="_blank">monkeytype</a>
-    </p>
-  </div>
+  <div id="status">loading...</div>
 
   <footer>
-    <a href="https://monkeytype.com/profile/acullo" target="_blank">monkeytype.com/profile/acullo</a>
+    <a href="https://monkeytype.com/profile/acullo" target="_blank">monkeytype</a>
   </footer>
 
   <script>
     async function load() {
       try {
-        const res = await fetch('https://api.monkeytype.com/users/acullo/profile', {
-          headers: { 'Accept': 'application/json' }
-        });
-
-        if (!res.ok) throw new Error(res.status);
-
+        const res = await fetch('https://api.monkeytype.com/users/acullo/profile');
+        if (!res.ok) throw new Error();
         const { data } = await res.json();
 
-        // top stats
-        const completed = data.typingStats?.completedTests ?? '—';
-        const timeHours = data.typingStats?.timeTyping
-          ? (data.typingStats.timeTyping / 3600).toFixed(1)
-          : '—';
-        const joined = data.addedAt
-          ? new Date(data.addedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-          : '—';
-
-        document.getElementById('tests-completed').textContent = completed.toLocaleString?.() ?? completed;
-        document.getElementById('time-typing').textContent = timeHours;
-        document.getElementById('member-since').textContent = joined;
-
-        // avg wpm across all personal bests
         const pb = data.personalBests ?? {};
-        const allWpms = Object.values(pb).flatMap(modeObj =>
-          Object.values(modeObj).flatMap(entries =>
-            entries.length ? [entries.reduce((a, b) => b.wpm > a.wpm ? b : a).wpm] : []
-          )
-        );
-        document.getElementById('avg-wpm').textContent = allWpms.length
-          ? Math.round(allWpms.reduce((a, b) => a + b, 0) / allWpms.length)
+        const wpms = [], accs = [];
+
+        for (const modeObj of Object.values(pb)) {
+          for (const entries of Object.values(modeObj)) {
+            if (!entries.length) continue;
+            const best = entries.reduce((a, b) => b.wpm > a.wpm ? b : a);
+            wpms.push(best.wpm);
+            if (best.acc != null) accs.push(best.acc);
+          }
+        }
+
+        document.getElementById('wpm').textContent = wpms.length
+          ? Math.round(wpms.reduce((a, b) => a + b) / wpms.length)
           : '—';
+        document.getElementById('acc').textContent = accs.length
+          ? Math.round(accs.reduce((a, b) => a + b) / accs.length) + '%'
+          : '—';
+        document.getElementById('status').textContent = '';
 
-        const grid = document.getElementById('bests-grid');
-        const modes = [
-          { key: 'time', label: '15s', sub: '15' },
-          { key: 'time', label: '30s', sub: '30' },
-          { key: 'time', label: '60s', sub: '60' },
-          { key: 'time', label: '120s', sub: '120' },
-          { key: 'words', label: '10w', sub: '10' },
-          { key: 'words', label: '25w', sub: '25' },
-          { key: 'words', label: '50w', sub: '50' },
-          { key: 'words', label: '100w', sub: '100' },
-        ];
-
-        let anyBests = false;
-        for (const mode of modes) {
-          const entries = pb[mode.key]?.[mode.sub];
-          if (!entries || entries.length === 0) continue;
-          anyBests = true;
-          const best = entries.reduce((a, b) => (b.wpm > a.wpm ? b : a));
-          const card = document.createElement('div');
-          card.className = 'best-card';
-          card.innerHTML = `
-            <div class="mode">${mode.label}</div>
-            <div class="wpm">${Math.round(best.wpm)}</div>
-            <div class="acc">${best.acc?.toFixed(1) ?? '—'}% acc</div>
-          `;
-          grid.appendChild(card);
-        }
-
-        if (!anyBests) {
-          grid.innerHTML = '<p style="color:#646669; font-size:0.85rem;">no personal bests found</p>';
-        }
-
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('main').style.display = 'block';
-
-      } catch (e) {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('error').style.display = 'block';
+      } catch {
+        document.getElementById('status').textContent = 'could not load stats';
       }
     }
 
