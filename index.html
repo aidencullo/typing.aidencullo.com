@@ -112,7 +112,9 @@
         document.getElementById('acc').textContent = accs.length
           ? Math.round(accs.reduce((a, b) => a + b) / accs.length) + '%'
           : '—';
-        document.getElementById('status').textContent = '';
+        const now = new Date();
+        document.getElementById('status').textContent =
+          'updated ' + now.toLocaleString();
 
       } catch {
         document.getElementById('status').textContent = 'could not load stats';
